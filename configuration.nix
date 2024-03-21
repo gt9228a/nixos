@@ -38,8 +38,22 @@
 
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
+  };
+ 
+ hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = true;
+  };
+
   services.xserver.displayManager.sddm.enable = true;
-  services.xserver.displayManager.sddm.wayland.enable = true;
+#  services.xserver.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.xserver.xkb.layout = "us";
 #  services.xrdp.enable = true;
