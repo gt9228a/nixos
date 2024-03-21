@@ -65,19 +65,23 @@
 
 
   services.printing.enable = true;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
-
+#  security.rtkit.enable = true;
+#  services.pipewire = {
+#    enable = true;
+#    alsa.enable = true;
+#    alsa.support32Bit = true;
+#    pulse.enable = true;
+#    jack.enable = true;
+#  };
+sound.enable = true;
+hardware.pulseaudio.enable = true;
+hardware.pulseaudio.support32Bit = true;
+hardware.pulseaudio.zeroconf.discovery.enable = true;
+hardware.pulseaudio.extraConfig = "load-module module-raop-discover";
+hardware.pulseaudio.package = pkgs.pulseaudioFull;
   users.users.michael = {
      isNormalUser = true;
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "audio" "libvirt"]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
      ];
    };
