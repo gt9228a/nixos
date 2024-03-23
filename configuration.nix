@@ -74,6 +74,7 @@
 #    jack.enable = true;
 #  };
 sound.enable = true;
+services.avahi.enable = true;
 hardware.pulseaudio.enable = true;
 hardware.pulseaudio.support32Bit = true;
 hardware.pulseaudio.zeroconf.discovery.enable = true;
