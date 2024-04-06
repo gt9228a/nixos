@@ -1,0 +1,8 @@
+<network connections='2'>
+  <name>macvtap-net</name>
+  <uuid>f33b7479-8f19-4604-b996-95545557bf3a</uuid>
+  <forward dev='enp8s0' mode='bridge'>
+    <interface dev='enp8s0' connections='2'/>
+  </forward>
+</network>
+
