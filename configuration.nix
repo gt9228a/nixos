@@ -9,11 +9,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPatches = [ {
-    name = "add-acs-overrides";
-    patch = ./acs-overrides.patch;
-  } ];
+  boot.kernelPackages = pkgs.linuxPackages_zen;
   
   boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio"];
   boot.extraModprobeConfig = ''
@@ -52,11 +48,9 @@
     };
 
 
-  # Enable the Plasma 5 Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
   
-
   services.printing.enable = true;
 
   services.pipewire = {
@@ -69,19 +63,6 @@
   virtualisation.libvirtd.qemu.swtpm.enable = true;
   virtualisation.libvirtd.qemu.ovmf.packages = [pkgs.OVMFFull.fd];  
   services.avahi.enable = true;
-  services.avahi.publish.enable = true;
-  services.avahi.publish.userServices = true;
-
-  systemd.user.services.sunshine = {
-      description = "Sunshine self-hosted game stream host for Moonlight";
-      startLimitBurst = 5;
-      startLimitIntervalSec = 500;
-      serviceConfig = {
-        ExecStart = "${config.security.wrapperDir}/sunshine";
-        Restart = "on-failure";
-        RestartSec = "5s";
-      };
-    };
   
   environment.etc = {
    "ovmf/edk2-x86_64-secure-code.fd" = {
@@ -101,7 +82,7 @@
 
   users.users.michael = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "libvirt" "audio" "input"]; 
+    extraGroups = [ "wheel" "libvirtd" "audio" "input"]; 
     packages = with pkgs; [
     ];
   };
@@ -112,45 +93,20 @@
      nano
      git
      swtpm
-#     sunshine
      dive
      podman-tui
      podman-compose 
      distrobox
   ];
 
-#security.wrappers.sunshine = {
-#      owner = "root";
-#      group = "root";
-#      capabilities = "cap_sys_admin+p";
-#      source = "${pkgs.sunshine}/bin/sunshine";
-#  };
-
  virtualisation.containers.enable = true;
   virtualisation = {
     podman = {
       enable = true;
-
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
-      dockerCompat = true;
-
-      # Required for containers under podman-compose to be able to talk to each other.
+      dockerCompat = true
       defaultNetwork.settings.dns_enabled = true;
     };
   };
-
-services.xrdp.enable = true;
-services.xrdp.defaultWindowManager = "startplasma-x11";
-services.xrdp.openFirewall = true;
-
-#security.acme.acceptTerms = true;
-#security.acme.defaults.email = "michael@romilimi.com";
-#security.acme.certs."romilimi.com" = {
-#  domain = "*.romilimi.com";
-#  dnsProvider = "rfc2136";
-#  environmentFile = "/var/lib/secrets/certs.secret";
-#  dnsPropagationCheck = true;
-#};
 
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
@@ -158,7 +114,6 @@ services.xrdp.openFirewall = true;
   #   enableSSHSupport = true;
   # };
    
-  security.polkit.enable = true;
   services.openssh.enable = true;
   services.tailscale.enable = true;
   networking.firewall.enable = false;
