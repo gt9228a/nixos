@@ -19,7 +19,6 @@
     citrix_workspace
     firefox
     google-chrome
-    looking-glass-client
     nomachine-client
 ];
 
