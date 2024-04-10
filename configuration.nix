@@ -8,27 +8,24 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPatches = [ {
+    name = "add-acs-overrides";
+    patch = ./acs-overrides.patch;
+  } ];
   
-  boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio" "kvmfr"];
+  boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio"];
   boot.extraModprobeConfig = ''
     options vfio-pci ids=1002:67df,1002:aaf0,8086:15b8
-    options kvmfr static_size_mb=64
-  '';
-  
-  boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "kvm_intel.nested=1" "kvm.ignore_msrs=1" "kvm_intel.emulate_invalid_guest_state=0" ];
-  boot.kernelPackages = pkgs.linuxPackages_zen;
-  boot.extraModulePackages = [ pkgs.linuxPackages_zen.kvmfr ];  
+    '';
 
-  services.udev.extraRules = ''
-    SUBSYSTEM=="kvmfr", OWNER="michael", GROUP="libvirtd", MODE="0666"
-  '';
- 
+  boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "isolcpus=2-5,8-11"];
 
-  networking.hostName = "nixos"; 
-  networking.networkmanager.enable = true;  
+  networking.hostName = "nixos"; # Define your hostname.
+  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   time.timeZone = "America/New_York";
-
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
@@ -36,87 +33,65 @@
     keyMap = "us";
   };
 
+  # Enable the X11 windowing system.
   services.xserver.enable = true;
+
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
+    hardware.opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
  
- hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
-    open = false;
-    nvidiaSettings = true;
-  };
+  hardware.nvidia = {
+     modesetting.enable = true;
+     powerManagement.enable = false;
+     powerManagement.finegrained = false;
+     open = false;
+     nvidiaSettings = true;
+    };
 
+
+  # Enable the Plasma 5 Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-#  services.xserver.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.xserver.xkb.layout = "us";
-#  services.xrdp.enable = true;
-#  services.xrdp.defaultWindowManager = "startplasma-x11";
-#  services.xrdp.openFirewall = true;
-#  services.getty.autologinUser = "michael";
-#  services.xserver.displayManager.autoLogin.enable = true;
-#  services.xserver.displayManager.autoLogin.user = "michael";
-
+  
 
   services.printing.enable = true;
-#  security.rtkit.enable = true;
-#  services.pipewire = {
-#    enable = true;
-#    alsa.enable = true;
-#    alsa.support32Bit = true;
-#    pulse.enable = true;
-#    jack.enable = true;
-#  };
-sound.enable = true;
-services.avahi.enable = true;
-hardware.pulseaudio.enable = true;
-hardware.pulseaudio.support32Bit = true;
-hardware.pulseaudio.zeroconf.discovery.enable = true;
-hardware.pulseaudio.extraConfig = "load-module module-raop-discover";
-hardware.pulseaudio.package = pkgs.pulseaudioFull;
-  users.users.michael = {
-     isNormalUser = true;
-     extraGroups = [ "wheel" "audio" "libvirt"]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-     ];
-   };
 
-   environment.systemPackages = with pkgs; [
-     vim 
-     git
-     wget
-     nano
-     curl
-     swtpm   
-   ];
-
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+  };
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
   virtualisation.libvirtd.qemu.swtpm.enable = true;
-  virtualisation.libvirtd.qemu.ovmf.packages = [pkgs.OVMFFull.fd];
-  virtualisation.libvirtd.qemu.verbatimConfig = ''
-    cgroup_device_acl = [
-    "/dev/kvmfr0", 
-    "/dev/null", "/dev/full", "/dev/zero",
-    "/dev/random", "/dev/urandom",
-    "/dev/ptmx", "/dev/kvm", "/dev/kqemu",
-    "/dev/rtc", "/dev/hpet","/dev/net/tun",
-    "/dev/vfio/vfio",
-        ]
-    '';
+  virtualisation.libvirtd.qemu.ovmf.packages = [pkgs.OVMFFull.fd];  
+  services.avahi.enable = true;
+  services.avahi.publish.enable = true;
+  services.avahi.publish.userServices = true;
+
+  systemd.user.services.sunshine = {
+      description = "Sunshine self-hosted game stream host for Moonlight";
+      startLimitBurst = 5;
+      startLimitIntervalSec = 500;
+      serviceConfig = {
+        ExecStart = "${config.security.wrapperDir}/sunshine";
+        Restart = "on-failure";
+        RestartSec = "5s";
+      };
+    };
   
+  environment.etc = {
+   "ovmf/edk2-x86_64-secure-code.fd" = {
+    source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-x86_64-secure-code.fd";
+    };
+   "ovmf/edk2-i386-vars.fd" = {
+    source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-i386-vars.fd";
+    };
+  };
+
   virtualisation.kvmgt.enable = true;
   virtualisation.kvmgt.vgpus = {
   "i915-GVTg_V5_4" = {
@@ -124,27 +99,73 @@ hardware.pulseaudio.package = pkgs.pulseaudioFull;
     };
   };
 
-  environment.etc = {
-  "ovmf/edk2-x86_64-secure-code.fd" = {
-    source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-x86_64-secure-code.fd";
-   };
-
-  "ovmf/edk2-i386-vars.fd" = {
-    source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-i386-vars.fd";
-   };
+  users.users.michael = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "libvirt" "audio" "input"]; 
+    packages = with pkgs; [
+    ];
   };
 
+  environment.systemPackages = with pkgs; [
+     vim 
+     wget
+     nano
+     git
+     swtpm
+#     sunshine
+     dive
+     podman-tui
+     podman-compose 
+     distrobox
+  ];
+
+#security.wrappers.sunshine = {
+#      owner = "root";
+#      group = "root";
+#      capabilities = "cap_sys_admin+p";
+#      source = "${pkgs.sunshine}/bin/sunshine";
+#  };
+
+ virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
+services.xrdp.enable = true;
+services.xrdp.defaultWindowManager = "startplasma-x11";
+services.xrdp.openFirewall = true;
+
+#security.acme.acceptTerms = true;
+#security.acme.defaults.email = "michael@romilimi.com";
+#security.acme.certs."romilimi.com" = {
+#  domain = "*.romilimi.com";
+#  dnsProvider = "rfc2136";
+#  environmentFile = "/var/lib/secrets/certs.secret";
+#  dnsPropagationCheck = true;
+#};
+
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
+   
+  security.polkit.enable = true;
   services.openssh.enable = true;
-  services.openssh.settings.X11Forwarding = true;
   services.tailscale.enable = true;
-  
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
   networking.firewall.enable = false;
+  services.openssh.settings.X11Forwarding = true;
+
   system.stateVersion = "24.05"; # Did you read the comment?
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 }
-

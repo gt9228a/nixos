@@ -20,6 +20,7 @@
     firefox
     google-chrome
     looking-glass-client
+    nomachine-client
 ];
 
   programs.git = {
