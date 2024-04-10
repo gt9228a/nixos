@@ -19,6 +19,7 @@
     citrix_workspace
     firefox
     google-chrome
+    looking-glass-client
     nomachine-client
 ];
 
@@ -46,6 +47,17 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
+  };
+
+programs.plasma = {
+    enable = true;
+    hotkeys.commands."launch-konsole" = {
+      name = "Launch Konsole";
+      key = "Meta+Alt+K";
+      command = "konsole";
+    };
+
+   overrideConfig = true;
   };
 
   home.stateVersion = "24.05";
