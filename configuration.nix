@@ -11,12 +11,12 @@
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
   
-  boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio"];
+  boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio" ];
   boot.extraModprobeConfig = ''
-    options vfio-pci ids=1002:67df,1002:aaf0,8086:15b8
+    options vfio-pci ids=1002:67df,1002:aaf0,10de:1b06,10de:10ef
     '';
 
-  boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "isolcpus=2-5,8-11"];
+  boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "isolcpus=2-5,8-11"]; 
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -32,31 +32,22 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  services.xserver.videoDrivers = [ "nvidia" ];
-    hardware.opengl = {
-      enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
-    };
- 
-  hardware.nvidia = {
-     modesetting.enable = true;
-     powerManagement.enable = false;
-     powerManagement.finegrained = false;
-     open = false;
-     nvidiaSettings = true;
-    };
-
-
   services.xserver.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
   
   services.printing.enable = true;
 
+  security.rtkit.enable = true;
   services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-  };
+   enable = true;
+   alsa.enable = true;
+   alsa.support32Bit = true;
+   pulse.enable = true;
+   jack.enable = true; 
+   };
+
+  hardware.pulseaudio.enable = false;
+  sound.enable = false;
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
@@ -73,12 +64,12 @@
     };
   };
 
-  virtualisation.kvmgt.enable = true;
-  virtualisation.kvmgt.vgpus = {
-  "i915-GVTg_V5_4" = {
-    uuid = [ "dfc6215b-fb46-4755-83b4-7a12175fac5b" ];
-    };
-  };
+#  virtualisation.kvmgt.enable = true;
+#  virtualisation.kvmgt.vgpus = {
+#  "i915-GVTg_V5_4" = {
+#    uuid = [ "dfc6215b-fb46-4755-83b4-7a12175fac5b" ];
+#    };
+#  };
 
   users.users.michael = {
     isNormalUser = true;
@@ -97,16 +88,20 @@
      podman-tui
      podman-compose 
      distrobox
+     nix-index
   ];
+
 
  virtualisation.containers.enable = true;
   virtualisation = {
     podman = {
       enable = true;
-      dockerCompat = true
+      dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
   };
+
+
 
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
