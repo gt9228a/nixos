@@ -16,7 +16,7 @@
     lm_sensors 
     pciutils 
     usbutils       
-    citrix_workspace
+#    citrix_workspace
     firefox
     google-chrome
     looking-glass-client

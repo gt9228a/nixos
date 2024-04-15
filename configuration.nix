@@ -13,7 +13,7 @@
   
   boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio" ];
   boot.extraModprobeConfig = ''
-    options vfio-pci ids=1002:67df,1002:aaf0,10de:1b06,10de:10ef
+    options vfio-pci ids=1002:67df,1002:aaf0
     '';
 
   boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "isolcpus=2-5,8-11"]; 
@@ -32,7 +32,7 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  services.xserver.displayManager.sddm.enable = true;
+  services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
   
   services.printing.enable = true;
@@ -63,13 +63,6 @@
     source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-i386-vars.fd";
     };
   };
-
-#  virtualisation.kvmgt.enable = true;
-#  virtualisation.kvmgt.vgpus = {
-#  "i915-GVTg_V5_4" = {
-#    uuid = [ "dfc6215b-fb46-4755-83b4-7a12175fac5b" ];
-#    };
-#  };
 
   users.users.michael = {
     isNormalUser = true;
