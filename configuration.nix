@@ -10,16 +10,10 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
-#  boot.extraModulePackages = [ pkgs.linuxPackages_zen.kvmfr ];
   boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio" ];
   boot.extraModprobeConfig = ''
     options vfio-pci ids=10de:1b06,10de:10ef
-    options kvmfr static_size_mb=64
     '';
-
-#   services.udev.extraRules = ''
-#   SUBSYSTEM=="kvmfr", OWNER="michael", GROUP="libvirtd", MODE="0666"
-# '';
 
 systemd.tmpfiles.rules = [
   "f /dev/shm/looking-glass 0660 michael qemu-libvirtd -"
@@ -81,18 +75,7 @@ systemd.tmpfiles.rules = [
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
   virtualisation.libvirtd.qemu.swtpm.enable = true;
-  virtualisation.libvirtd.qemu.ovmf.packages = [pkgs.OVMFFull.fd];  
-  virtualisation.libvirtd.qemu.verbatimConfig = ''
-     cgroup_device_acl = [
-    "/dev/kvmfr0", 
-    "/dev/null", "/dev/full", "/dev/zero",
-    "/dev/random", "/dev/urandom",
-    "/dev/ptmx", "/dev/kvm", "/dev/kqemu",
-    "/dev/rtc", "/dev/hpet","/dev/net/tun",
-    "/dev/vfio/vfio", "/dev/shm/looking-glass"
-        ]
-'';
-  
+  virtualisation.libvirtd.qemu.ovmf.packages = [pkgs.OVMFFull.fd];    
 
   services.avahi.enable = true;
   
@@ -139,22 +122,7 @@ systemd.tmpfiles.rules = [
       defaultNetwork.settings.dns_enabled = true;
     };
   };
-
-
-  virtualisation.kvmgt.enable = true;
-  virtualisation.kvmgt.vgpus = {
-  "i915-GVTg_V5_4" = {
-    uuid = [ "dfc6215b-fb46-4755-83b4-7a12175fac5b" ];
-    };
-  };
-
-
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-   
+ 
   services.openssh.enable = true;
   services.tailscale.enable = true;
   networking.firewall.enable = false;
