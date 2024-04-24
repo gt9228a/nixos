@@ -34,7 +34,7 @@
      wayland.enable= true;   
   };
 
-  xdg.portal.enable = true;
+  #xdg.portal.enable = true;
 
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "michael";
