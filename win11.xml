@@ -1,6 +1,6 @@
 <domain type='kvm' id='1'>
   <name>win11</name>
-  <uuid>109cef6a-2cc2-4d4f-b157-428fb0757985</uuid>
+  <uuid>b9332826-5f12-41c9-84c4-8d122fa6ee41</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://microsoft.com/win/11"/>
@@ -8,21 +8,23 @@
   </metadata>
   <memory unit='KiB'>25165824</memory>
   <currentMemory unit='KiB'>25165824</currentMemory>
-  <vcpu placement='static'>4</vcpu>
+  <vcpu placement='static'>6</vcpu>
   <cputune>
-    <vcpupin vcpu='0' cpuset='4'/>
-    <vcpupin vcpu='1' cpuset='10'/>
-    <vcpupin vcpu='2' cpuset='5'/>
-    <vcpupin vcpu='3' cpuset='11'/>
-    <emulatorpin cpuset='0-1,6-7'/>
+    <vcpupin vcpu='0' cpuset='3'/>
+    <vcpupin vcpu='1' cpuset='9'/>
+    <vcpupin vcpu='2' cpuset='4'/>
+    <vcpupin vcpu='3' cpuset='10'/>
+    <vcpupin vcpu='4' cpuset='5'/>
+    <vcpupin vcpu='5' cpuset='11'/>
+    <emulatorpin cpuset='0-2,6-8'/>
   </cputune>
   <resource>
     <partition>/machine</partition>
   </resource>
   <os>
     <type arch='x86_64' machine='pc-q35-8.2'>hvm</type>
-    <loader readonly='yes' secure='yes' type='pflash'>/etc/ovmf/edk2-x86_64-secure-code.fd</loader>
-    <nvram template='/etc/ovmf/edk2-i386-vars.fd'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
+    <loader readonly='yes' type='pflash'>/run/libvirt/nix-ovmf/OVMF_CODE.fd</loader>
+    <nvram template='/run/libvirt/nix-ovmf/OVMF_VARS.fd'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
   </os>
   <features>
     <acpi/>
@@ -33,10 +35,9 @@
       <spinlocks state='on' retries='8191'/>
     </hyperv>
     <vmport state='off'/>
-    <smm state='on'/>
   </features>
   <cpu mode='host-passthrough' check='none' migratable='on'>
-    <topology sockets='1' dies='1' cores='2' threads='2'/>
+    <topology sockets='1' dies='1' cores='2' threads='3'/>
   </cpu>
   <clock offset='localtime'>
     <timer name='rtc' tickpolicy='catchup'/>
@@ -62,93 +63,93 @@
     </controller>
     <controller type='pci' index='1' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='1' port='0x10'/>
+      <target chassis='1' port='0x8'/>
       <alias name='pci.1'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0' multifunction='on'/>
     </controller>
     <controller type='pci' index='2' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='2' port='0x11'/>
+      <target chassis='2' port='0x9'/>
       <alias name='pci.2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
     </controller>
     <controller type='pci' index='3' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='3' port='0x12'/>
+      <target chassis='3' port='0xa'/>
       <alias name='pci.3'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
     </controller>
     <controller type='pci' index='4' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='4' port='0x13'/>
+      <target chassis='4' port='0xb'/>
       <alias name='pci.4'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x3'/>
     </controller>
     <controller type='pci' index='5' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='5' port='0x14'/>
+      <target chassis='5' port='0xc'/>
       <alias name='pci.5'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x4'/>
     </controller>
     <controller type='pci' index='6' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='6' port='0x15'/>
+      <target chassis='6' port='0xd'/>
       <alias name='pci.6'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x5'/>
     </controller>
     <controller type='pci' index='7' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='7' port='0x16'/>
+      <target chassis='7' port='0xe'/>
       <alias name='pci.7'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x6'/>
     </controller>
     <controller type='pci' index='8' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='8' port='0x17'/>
+      <target chassis='8' port='0xf'/>
       <alias name='pci.8'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x7'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x7'/>
     </controller>
     <controller type='pci' index='9' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='9' port='0x18'/>
+      <target chassis='9' port='0x10'/>
       <alias name='pci.9'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0' multifunction='on'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
     </controller>
     <controller type='pci' index='10' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='10' port='0x19'/>
+      <target chassis='10' port='0x11'/>
       <alias name='pci.10'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
     </controller>
     <controller type='pci' index='11' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='11' port='0x1a'/>
+      <target chassis='11' port='0x12'/>
       <alias name='pci.11'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
     </controller>
     <controller type='pci' index='12' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='12' port='0x1b'/>
+      <target chassis='12' port='0x13'/>
       <alias name='pci.12'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x3'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
     </controller>
     <controller type='pci' index='13' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='13' port='0x1c'/>
+      <target chassis='13' port='0x14'/>
       <alias name='pci.13'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x4'/>
     </controller>
     <controller type='pci' index='14' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='14' port='0x1d'/>
+      <target chassis='14' port='0x15'/>
       <alias name='pci.14'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
     </controller>
     <controller type='pci' index='15' model='pcie-root-port'>
       <model name='pcie-root-port'/>
-      <target chassis='15' port='0x1e'/>
+      <target chassis='15' port='0x16'/>
       <alias name='pci.15'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x6'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
     </controller>
     <controller type='pci' index='16' model='pcie-to-pci-bridge'>
       <model name='pcie-pci-bridge'/>
@@ -159,22 +160,10 @@
       <alias name='ide'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
     </controller>
-    <interface type='direct'>
-      <mac address='52:54:00:66:2e:34'/>
-      <source network='macvtap-net' portid='d000a1c3-3b47-43f5-8ada-b231647a28ff' dev='enp8s0' mode='bridge'/>
-      <target dev='macvtap0'/>
-      <model type='virtio'/>
-      <alias name='net0'/>
-      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
-    </interface>
-    <interface type='network'>
-      <mac address='52:54:00:38:dd:ec'/>
-      <source network='isolated' portid='7b7baaf5-b561-4abd-b434-5f1f3ac5a84f' bridge='virbr1'/>
-      <target dev='vnet0'/>
-      <model type='virtio'/>
-      <alias name='net1'/>
-      <address type='pci' domain='0x0000' bus='0x08' slot='0x00' function='0x0'/>
-    </interface>
+    <controller type='virtio-serial' index='0'>
+      <alias name='virtio-serial0'/>
+      <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
+    </controller>
     <input type='mouse' bus='ps2'>
       <alias name='input0'/>
     </input>
@@ -193,7 +182,7 @@
       </source>
       <boot order='1'/>
       <alias name='hostdev0'/>
-      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
     </hostdev>
     <hostdev mode='subsystem' type='pci' managed='yes'>
       <driver name='vfio'/>
@@ -201,30 +190,53 @@
         <address domain='0x0000' bus='0x0c' slot='0x00' function='0x0'/>
       </source>
       <alias name='hostdev1'/>
-      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='mdev' managed='no' model='vfio-pci' display='off'>
-      <source>
-        <address uuid='dfc6215b-fb46-4755-83b4-7a12175fac5b'/>
-      </source>
-      <alias name='hostdev2'/>
-      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
     </hostdev>
     <hostdev mode='subsystem' type='pci' managed='yes'>
       <driver name='vfio'/>
       <source>
         <address domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
       </source>
+      <alias name='hostdev2'/>
+      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x00' slot='0x1f' function='0x6'/>
+      </source>
       <alias name='hostdev3'/>
-      <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x10' slot='0x01' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+      </source>
+      <alias name='hostdev4'/>
+      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x01' slot='0x00' function='0x1'/>
+      </source>
+      <alias name='hostdev5'/>
+      <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
     </hostdev>
     <watchdog model='itco' action='reset'>
       <alias name='watchdog0'/>
     </watchdog>
     <memballoon model='virtio'>
       <alias name='balloon0'/>
-      <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x08' slot='0x00' function='0x0'/>
     </memballoon>
+    <shmem name='looking-glass'>
+      <model type='ivshmem-plain'/>
+      <size unit='M'>64</size>
+      <alias name='shmem0'/>
+      <address type='pci' domain='0x0000' bus='0x10' slot='0x02' function='0x0'/>
+    </shmem>
   </devices>
   <seclabel type='dynamic' model='dac' relabel='yes'>
     <label>+0:+0</label>

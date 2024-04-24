@@ -8,22 +8,15 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelModules = [ "vfio_pci" "vfio_iommu_type1" "vfio" ];
   boot.extraModprobeConfig = ''
-    options vfio-pci ids=10de:1b06,10de:10ef
+    options vfio-pci ids=10de:1b06,10de:10ef,1002:67df,1002:aaf0
     '';
-
-systemd.tmpfiles.rules = [
-  "f /dev/shm/looking-glass 0660 michael qemu-libvirtd -"
-];
-
- 
   boot.kernelParams = [ "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" "isolcpus=3-5,9-11"]; 
 
-  networking.hostName = "nixos"; # Define your hostname.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.hostName = "nixos"; 
+  networking.networkmanager.enable = true;  
 
   time.timeZone = "America/New_York";
 
@@ -33,7 +26,6 @@ systemd.tmpfiles.rules = [
     keyMap = "us";
   };
 
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
 
   services.displayManager.sddm = {
@@ -42,19 +34,16 @@ systemd.tmpfiles.rules = [
      wayland.enable= true;   
   };
 
+  xdg.portal.enable = true;
+
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "michael";
   services.desktopManager.plasma6.enable = true;
-
-  services.xserver.videoDrivers = [ "amdgpu" ];
 
   hardware.opengl = {
     enable = true;
     driSupport = true;
     driSupport32Bit = true; 
-    extraPackages = with pkgs; [
-        rocmPackages.clr.icd
-   ];
  };
 
 
@@ -88,10 +77,6 @@ systemd.tmpfiles.rules = [
     };
   };
 
- environment.variables = {
-  ROC_ENABLE_PRE_VEGA = "1";
-};
-
   users.users.michael = {
     isNormalUser = true;
     extraGroups = [ "wheel" "libvirtd" "audio" "input" "qemu-libvirtd"]; 
@@ -110,9 +95,9 @@ systemd.tmpfiles.rules = [
      podman-compose 
      distrobox
      nix-index
-     clinfo       
+     clinfo   
+     input-leap
 ];
-
 
  virtualisation.containers.enable = true;
   virtualisation = {
